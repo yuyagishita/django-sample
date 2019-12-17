@@ -1,0 +1,29 @@
+version: '2'
+services:
+  nginx:
+    build: "./Infrastructure/nginx/"
+    volumes:
+      - ./logs/nginx:/var/log/nginx
+    ports:
+      - "80:80"
+    networks:
+      django-sample-network:
+        ipv4_address: 172.23.0.4
+  python:
+    build: "./Infrastructure/python/"
+    volumes:
+      - ./Application/django-sample:/home/work/django-sample
+      - ./logs/django:/home/work/django
+      - ./logs/uwsgi:/home/work/uwsgi
+    ports:
+      - "8000:8000"
+    networks:
+      django-sample-network:
+        ipv4_address: 172.23.0.5
+networks:
+  django-sample-network:
+    driver: bridge
+    ipam:
+     driver: default
+     config:
+       - subnet: 172.23.0.0/24
